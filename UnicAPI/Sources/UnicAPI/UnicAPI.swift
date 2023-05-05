@@ -1,22 +1,38 @@
+//
+//  UnicAPIRequestsConfiguration.swift
+//
+//
+//  Created by Ressier Mathilde on 05/05/2023.
+//
+
+/// Create your UnicAPI combining the network provider of your choice and the services you want to implements
 public struct UnicAPI {
 
     // -------------------------------------------------------------------------
     // MARK: - Properties
     // -------------------------------------------------------------------------
 
+    // MARK: Services
+
 //    public var healthProfessionalsService: ConexAPIHealthProfessionalsService
 //    public var authenticationService: ConexAPIAuthenticationService
 //    public var userService: ConexAPIUserService
+
+    // MARK: Network Provider
+
+    typealias UnicAPINetworkProvider = URLSessionNetworkProvider<UnicAPIRequestsConfiguration>
+
+    private let networkProvider: UnicAPINetworkProvider
 
     // -------------------------------------------------------------------------
     // MARK: - Init
     // -------------------------------------------------------------------------
 
     public init(
-        baseURL: String = "https://devci-backend.conexsante.com/"
+        baseURL: String = ""
     ) {
-        let configuration = UnicAPI.RequestsConfiguration(baseUrl: baseURL)
-        let networkProvider = UnicAPI.NetworkProvider(configuration: configuration)
+        let configuration = UnicAPIRequestsConfiguration(baseUrl: baseURL)
+        self.networkProvider = UnicAPINetworkProvider(configuration: configuration)
 
 //        self.healthProfessionalsService = ConexAPIHealthProfessionalsService(networkProvider: networkProvider)
 //        self.authenticationService = ConexAPIAuthenticationService(networkProvider: networkProvider)
@@ -28,12 +44,6 @@ public struct UnicAPI {
     // -------------------------------------------------------------------------
 
     public func setToken(_ token: TokenType?) {
-        let networkProviders: [UnicAPI.NetworkProvider] = [
-//            self.healthProfessionalsService.networkProvider,
-//            self.authenticationService.networkProvider,
-//            self.userService.networkProvider
-        ]
-
-        networkProviders.forEach { $0.update(token: token) }
+        self.networkProvider.configuration.header.authorization = token?.description
     }
 }
